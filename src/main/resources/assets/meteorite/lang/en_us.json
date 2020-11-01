@@ -1,0 +1,46 @@
+{
+  "meteorite.config.title": "meteorite",
+
+  "meteorite.config.category.world": "World Info",
+  "meteorite.config.category.player": "Player Info",
+  "meteorite.config.category.network": "Network Info",
+  "meteorite.config.category.client": "Client Info",
+  "meteorite.config.category.general": "General Info",
+
+  "meteorite.config.option.showBiome": "Toggle Biome",
+  "meteorite.config.option.showPos": "Toggle Position",
+  "meteorite.config.option.showNetherPos": "Toggle Nether Position",
+  "meteorite.config.option.showLeftPos": "Toggle Left Position",
+  "meteorite.config.option.showDirection": "Toggle Direction",
+  "meteorite.config.option.showWorldTime": "Toggle World Time",
+
+  "meteorite.config.option.showEffects": "Toggle Effects",
+  "meteorite.config.option.showArmor": "Toggle Armor",
+  "meteorite.config.option.showArrow": "Toggle Arrow Count",
+  "meteorite.config.option.showTotem": "Toggle Totem Count",
+  "meteorite.config.option.showDurability": "Toggle Durability",
+  "meteorite.config.option.showXP": "Toggle XP",
+  "meteorite.config.option.showName": "Toggle Name",
+  "meteorite.config.option.showSpeed": "Toggle Speed",
+  "meteorite.config.option.showTextRadar": "Toggle Text Radar",
+  "meteorite.config.option.showSaturation": "Toggle Saturation",
+
+  "meteorite.config.option.showIP": "Toggle IP",
+  "meteorite.config.option.showPing": "Toggle Ping",
+  "meteorite.config.option.showTPS": "Toggle TPS",
+  "meteorite.config.option.showFPS": "Toggle FPS",
+  "meteorite.config.option.showTime": "Toggle Time",
+
+  "meteorite.config.option.rainbow": "Rainbow Text",
+  "meteorite.config.option.primary": "Primary Color",
+  "meteorite.config.option.secondary": "Secondary Color",
+  "meteorite.config.option.durabilityType": "Durability Type",
+  "meteorite.config.option.durabilityType.percentage": "Percentage",
+  "meteorite.config.option.durabilityType.absolute": "Absolute",
+  "meteorite.config.option.speedunit": "Speed Unit",
+  "meteorite.config.option.speedunit.meterspersecond": "m/s",
+  "meteorite.config.option.speedunit.kilometersperhour": "km/h",
+  "meteorite.config.option.textradarlocation": "Text Radar Location",
+  "meteorite.config.option.textradarlocation.normal": "Normal",
+  "meteorite.config.option.textradarlocation.crosshair": "Crosshair"
+}
