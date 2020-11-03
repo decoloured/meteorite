@@ -23,6 +23,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Drawable;
+import net.minecraft.client.gui.hud.BossBarHud;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -48,7 +49,7 @@ public class DrawUI implements Drawable {
   public static double serverTPS;
   public static double serverMSPT;
   private long lastServerTick;
-  private long lastServerTimeUpdate;
+  private static long lastServerTimeUpdate;
   private static int arrowCount = 0;
   private static int totemCount = 0;
   float color = 0.0F;
@@ -66,11 +67,20 @@ public class DrawUI implements Drawable {
   }
 
   public void draw() {
+    this.client.getProfiler().push("meteorite_hud");
     this.player = this.client.player;
     this.config = Meteorite.config();
 
     this.drawRightStats();
     this.drawLeftStats();
+
+    Float lagMeter = (System.nanoTime() - DrawUI.lastServerTimeUpdate)/1000000000F;
+    if (lagMeter > 2) {
+      MatrixStack stack = new MatrixStack();
+      String lag = "Server not responding ";
+      String lag2 = String.format("%.1fs", lagMeter);
+      chromaText(stack, lag + lag2, this.client.getWindow().getScaledWidth() / 2 - this.text.getWidth(lag + lag2) / 2, 2, 0, 0.01F);
+    }
 
     this.client.getProfiler().pop();
     color = System.nanoTime() / 50000000000F;
@@ -81,6 +91,8 @@ public class DrawUI implements Drawable {
     if (Meteorite.config().armor) {
       drawEquipmentInfo();
     }
+
+    offset = 0.0F;
 
     int scaleWidth = this.client.getWindow().getScaledWidth();
     MatrixStack stack = new MatrixStack();
@@ -307,12 +319,12 @@ public class DrawUI implements Drawable {
         }
       }
     }
-    offset = 0.0F;
   }
 
   private void drawLeftStats() {
     MatrixStack stack = new MatrixStack();
     height = this.text.fontHeight + 2;
+    offset = 0.0F;
     int scaledHeight = this.client.getWindow().getScaledHeight();
     int scaleWidth = 2;
     if (client.currentScreen instanceof ChatScreen) {
@@ -371,6 +383,7 @@ public class DrawUI implements Drawable {
       drawWithShadowconcat(stack, name, scaleWidth, scaledHeight - height, 
         Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, name2, this.config.secondary, true);
       scaledHeight -= height;
+      offset += offsetAmount;
     }
     offset = 0.0F;
   }
@@ -546,11 +559,11 @@ public class DrawUI implements Drawable {
     long currentTime = System.nanoTime();
     long elapsedTicks = totalWorldTime - this.lastServerTick;
     if (elapsedTicks > 0) {
-      DrawUI.serverMSPT = ((double) (currentTime - this.lastServerTimeUpdate) / (double) elapsedTicks) / 1000000D;
+      DrawUI.serverMSPT = ((double) (currentTime - DrawUI.lastServerTimeUpdate) / (double) elapsedTicks) / 1000000D;
       DrawUI.serverTPS = DrawUI.serverMSPT <= 50 ? 20D : (1000D / DrawUI.serverMSPT);
     }
     this.lastServerTick = totalWorldTime;
-    this.lastServerTimeUpdate = currentTime;
+    DrawUI.lastServerTimeUpdate = currentTime;
   }
 
   String durability(int damage, int maxdamage) {
@@ -561,12 +574,14 @@ public class DrawUI implements Drawable {
     }
   }
 
-  void chromaText(MatrixStack stack, String text, float x, float y, float offset) {
+  void chromaText(MatrixStack stack, String text, float x, float y, float offset, float offsetAmount) {
     float j = offset;
     for (int i = 0; i < text.length(); i++) {
-      this.text.drawWithShadow(stack, text.substring(i), x + this.text.getWidth(text.substring(0, i)), y,
-      Color.HSBtoRGB(color + j, 0.5F, 1.0F));
-      j -= 0.05F;
+      this.text.draw(stack, text.substring(i), x + this.text.getWidth(text.substring(0, i)) + 0.333333F, y + 0.333333F,
+        Color.HSBtoRGB(color + j, 0.5F, 0.25F));
+      this.text.draw(stack, text.substring(i), x + this.text.getWidth(text.substring(0, i)), y,
+        Color.HSBtoRGB(color + j, 0.5F, 1.0F));
+      j -= offsetAmount;
     }
   }
 
