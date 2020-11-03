@@ -191,11 +191,11 @@ public final class MeteoriteConfigController {
                         .setDefaultValue(defaults.tps)
                         .setSaveConsumer(value -> config.tps = value)
                         .build())
-								.addEntry(ConfigEntryBuilder.create()
-												.startBooleanToggle(new TranslatableText("meteorite.config.option.showLag"), config.lag)
-												.setDefaultValue(defaults.lag)
-												.setSaveConsumer(value -> config.lag = value)
-												.build());
+				.addEntry(ConfigEntryBuilder.create()
+						.startBooleanToggle(new TranslatableText("meteorite.config.option.showLag"), config.lag)
+						.setDefaultValue(defaults.lag)
+						.setSaveConsumer(value -> config.lag = value)
+						.build());
         builder.getOrCreateCategory(new TranslatableText("meteorite.config.category.client"))
                 .addEntry(ConfigEntryBuilder.create()
                         .startBooleanToggle(new TranslatableText("meteorite.config.option.showTime"), config.time)
