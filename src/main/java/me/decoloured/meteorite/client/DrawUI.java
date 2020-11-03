@@ -75,7 +75,7 @@ public class DrawUI implements Drawable {
     this.drawLeftStats();
 
     Float lagMeter = (System.nanoTime() - DrawUI.lastServerTimeUpdate)/1000000000F;
-    if (lagMeter > 2) {
+    if (this.config.lag && lagMeter > 2) {
       MatrixStack stack = new MatrixStack();
       String lag = "Server not responding ";
       String lag2 = String.format("%.1fs", lagMeter);

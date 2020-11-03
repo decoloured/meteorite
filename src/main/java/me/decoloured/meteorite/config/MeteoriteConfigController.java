@@ -190,7 +190,12 @@ public final class MeteoriteConfigController {
                         .startBooleanToggle(new TranslatableText("meteorite.config.option.showTPS"), config.tps)
                         .setDefaultValue(defaults.tps)
                         .setSaveConsumer(value -> config.tps = value)
-                        .build());
+                        .build())
+								.addEntry(ConfigEntryBuilder.create()
+												.startBooleanToggle(new TranslatableText("meteorite.config.option.showLag"), config.lag)
+												.setDefaultValue(defaults.lag)
+												.setSaveConsumer(value -> config.lag = value)
+												.build());
         builder.getOrCreateCategory(new TranslatableText("meteorite.config.category.client"))
                 .addEntry(ConfigEntryBuilder.create()
                         .startBooleanToggle(new TranslatableText("meteorite.config.option.showTime"), config.time)
@@ -233,6 +238,7 @@ public final class MeteoriteConfigController {
             config.ip = Boolean.parseBoolean(props.getProperty("network.ip"));
             config.ping = Boolean.parseBoolean(props.getProperty("network.ping"));
             config.tps = Boolean.parseBoolean(props.getProperty("network.tps"));
+            config.lag = Boolean.parseBoolean(props.getProperty("network.lag"));
 
             //Client
             config.fps = Boolean.parseBoolean(props.getProperty("client.fps"));
@@ -274,6 +280,7 @@ public final class MeteoriteConfigController {
         props.setProperty("network.ip", String.valueOf(config.ip));
         props.setProperty("network.ping", String.valueOf(config.ping));
         props.setProperty("network.tps", String.valueOf(config.tps));
+        props.setProperty("network.lag", String.valueOf(config.lag));
         //Client
         props.setProperty("client.fps", String.valueOf(config.fps));
         props.setProperty("client.time", String.valueOf(config.time));

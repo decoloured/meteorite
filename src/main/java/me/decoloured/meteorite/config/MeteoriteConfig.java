@@ -25,6 +25,7 @@ public class MeteoriteConfig {
     public boolean ip = true;
     public boolean ping = true;
     public boolean tps = true;
+		public boolean lag = true;
 
     //Client
     public boolean fps = true;
