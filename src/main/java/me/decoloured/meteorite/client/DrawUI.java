@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import org.apache.commons.lang3.text.WordUtils;
 import org.lwjgl.opengl.GL11;
@@ -23,7 +24,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.hud.BossBarHud;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -74,12 +74,15 @@ public class DrawUI implements Drawable {
     this.drawRightStats();
     this.drawLeftStats();
 
-    Float lagMeter = (System.nanoTime() - DrawUI.lastServerTimeUpdate)/1000000000F;
-    if (this.config.lag && lagMeter > 2) {
-      MatrixStack stack = new MatrixStack();
-      String lag = "Server not responding ";
-      String lag2 = String.format("%.1fs", lagMeter);
-      chromaText(stack, lag + lag2, this.client.getWindow().getScaledWidth() / 2 - this.text.getWidth(lag + lag2) / 2, 2, 0, 0.01F);
+    if (this.config.lag) {
+      Float lagMeter = (System.nanoTime() - DrawUI.lastServerTimeUpdate)/1000000000F;
+      if (lagMeter >= 2) {
+        MatrixStack stack = new MatrixStack();
+        RenderSystem.enableBlend();
+        String lag = "Server not responding ";
+        String lag2 = String.format("%.1fs", lagMeter);
+        chromaText(stack, lag + lag2, this.client.getWindow().getScaledWidth() / 2 - this.text.getWidth(lag + lag2) / 2, 2, 0, 0.01F);  
+      }
     }
 
     this.client.getProfiler().pop();
