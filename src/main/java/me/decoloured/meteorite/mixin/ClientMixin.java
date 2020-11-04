@@ -12,11 +12,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import me.decoloured.meteorite.Meteorite;
 import me.decoloured.meteorite.client.DrawUI;
 
 @Environment(EnvType.CLIENT)
 @Mixin(value = InGameHud.class)
-public abstract class ClientMixin {
+public class ClientMixin {
     private DrawUI drawUI;
     @Shadow
     @Final
@@ -42,6 +43,8 @@ public abstract class ClientMixin {
 
     @Inject(at = @At("HEAD"), method = "renderStatusEffectOverlay", cancellable = true)
     private void renderStatusEffectOverlay(CallbackInfo info) {
-        info.cancel();
+        if (!Meteorite.config().effects) {
+            info.cancel();
+        }
     }
 }
