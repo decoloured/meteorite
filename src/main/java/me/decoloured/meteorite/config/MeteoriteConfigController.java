@@ -249,6 +249,8 @@ public final class MeteoriteConfigController {
             //} catch (Exception e) {
             //    config.primary = 0xFFFFFF;
             //}
+
+            //General
             config.durabilityType = MeteoriteConfig.DurabilityType.valueOf(props.getProperty("general.durabilitytype", "PERCENTAGE"));
             config.speedUnit = MeteoriteConfig.SpeedUnit.valueOf(props.getProperty("general.speedunit", "METERSPERSECOND"));
             config.textRadarLocation = MeteoriteConfig.TextRadarLocation.valueOf(props.getProperty("general.textradarlocation", "NORMAL"));
