@@ -28,6 +28,7 @@
   "meteorite.config.option.showIP": "Toggle IP",
   "meteorite.config.option.showPing": "Toggle Ping",
   "meteorite.config.option.showTPS": "Toggle TPS",
+  "meteorite.config.option.showLag": "Toggle Lag Meter",
   "meteorite.config.option.showFPS": "Toggle FPS",
   "meteorite.config.option.showTime": "Toggle Time",
 
