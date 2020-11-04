@@ -42,9 +42,9 @@ public class ClientMixin {
     }
 
     @Inject(at = @At("HEAD"), method = "renderStatusEffectOverlay", cancellable = true)
-    private void renderStatusEffectOverlay(CallbackInfo info) {
-        if (!Meteorite.config().effects) {
-            info.cancel();
+    private void renderStatusEffectOverlay(CallbackInfo ci) {
+        if (Meteorite.config().effects) {
+            ci.cancel();
         }
     }
 }
