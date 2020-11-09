@@ -391,22 +391,22 @@ public class DrawUI implements Drawable {
       MatrixStack matrix2, String text2, int color2, boolean left) {
     if (left) {
       // chromaText(matrix1, text1, x, y, offset);
-      // this.text.drawWithShadow(matrix1, text1, x, y, color1);
-      this.text.draw(matrix1, text1, x + 0.333333F, y + 0.333333F, shadowColor());
-      this.text.draw(matrix1, text1, x, y, color1);
-      // this.text.drawWithShadow(matrix2, text2, x + this.text.getWidth(text1), y,
-      // color2);
-      this.text.draw(matrix2, text2, x + this.text.getWidth(text1) + 0.333333F, y + 0.333333F, 0x2A2A2A);
-      this.text.draw(matrix2, text2, x + this.text.getWidth(text1), y, color2);
+      this.text.drawWithShadow(matrix1, text1, x, y, color1);
+      //this.text.draw(matrix1, text1, x + 0.333333F, y + 0.333333F, shadowColor());
+      //this.text.draw(matrix1, text1, x, y, color1);
+      this.text.drawWithShadow(matrix2, text2, x + this.text.getWidth(text1), y,
+      color2);
+      //this.text.draw(matrix2, text2, x + this.text.getWidth(text1) + 0.333333F, y + 0.333333F, 0x2A2A2A);
+      //this.text.draw(matrix2, text2, x + this.text.getWidth(text1), y, color2);
     } else {
       // chromaText(matrix1, text1, x - this.text.getWidth(text1), y, offset);
-      // this.text.drawWithShadow(matrix1, text1, x - this.text.getWidth(text1), y,
-      // color1);
-      this.text.draw(matrix1, text1, x - this.text.getWidth(text1) + 0.333333F, y + 0.333333F, shadowColor());
-      this.text.draw(matrix1, text1, x - this.text.getWidth(text1), y, color1);
-      // this.text.drawWithShadow(matrix2, text2, x, y, color2);
-      this.text.draw(matrix2, text2, x + 0.333333F, y + 0.333333F, 0x2A2A2A);
-      this.text.draw(matrix2, text2, x, y, color2);
+      this.text.drawWithShadow(matrix1, text1, x - this.text.getWidth(text1), y,
+      color1);
+      //this.text.draw(matrix1, text1, x - this.text.getWidth(text1) + 0.333333F, y + 0.333333F, shadowColor());
+      //this.text.draw(matrix1, text1, x - this.text.getWidth(text1), y, color1);
+      this.text.drawWithShadow(matrix2, text2, x, y, color2);
+      //this.text.draw(matrix2, text2, x + 0.333333F, y + 0.333333F, 0x2A2A2A);
+      //this.text.draw(matrix2, text2, x, y, color2);
     }
   }
 
@@ -448,13 +448,13 @@ public class DrawUI implements Drawable {
         // (4 - String.valueOf(durability).length()) * 3, (height.floatValue() - 6F) *
         // 1.5F, offset);
 
-        // this.text.drawWithShadow(stack, durability(durability,
-        // equippedItem.getMaxDamage()), t, (height.floatValue() - 6F) * 1.5F,
-        // cColor(this.config.primaryColor, offset));
-        this.text.draw(stack, durability(durability, equippedItem.getMaxDamage()), t + 0.333333F,
-            (height.floatValue() - 6F) * 1.5F + 0.333333F, shadowColor());
-        this.text.draw(stack, durability(durability, equippedItem.getMaxDamage()), t, (height.floatValue() - 6F) * 1.5F,
-          Color.HSBtoRGB(color + offset, 0.5F, 1.0F));
+        this.text.drawWithShadow(stack, durability(durability,
+        equippedItem.getMaxDamage()), t, (height.floatValue() - 6F) * 1.5F,
+        Color.HSBtoRGB(color + offset, 0.5F, 1.0F));
+        //this.text.draw(stack, durability(durability, equippedItem.getMaxDamage()), t + 0.333333F,
+        //    (height.floatValue() - 6F) * 1.5F + 0.333333F, shadowColor());
+        //this.text.draw(stack, durability(durability, equippedItem.getMaxDamage()), t, (height.floatValue() - 6F) * 1.5F,
+        //  Color.HSBtoRGB(color + offset, 0.5F, 1.0F));
 
         GL11.glPopMatrix();
       }
@@ -548,10 +548,6 @@ public class DrawUI implements Drawable {
         dir = "Invalid";
     }
     return String.format("%s %s ", facing.name(), dir);
-  }
-
-  int shadowColor() {
-    return Color.HSBtoRGB(color + offset, 0.5F, 0.25F);
   }
 
   public void updateTPS(long totalWorldTime) {
