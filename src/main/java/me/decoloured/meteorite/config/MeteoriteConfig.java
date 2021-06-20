@@ -20,6 +20,7 @@ public class MeteoriteConfig {
     public boolean speed = true;
     public boolean textradar = true;
     public boolean saturation = true;
+    public boolean itemCount = true;
 
     //Network
     public boolean ip = true;
@@ -32,7 +33,8 @@ public class MeteoriteConfig {
     public boolean time = true;
 
     //General
-    public boolean rainbow = true;
+    public PrimaryColorType primaryColorType = PrimaryColorType.RAINBOW;
+    public SecondaryColorType secondaryColorType = SecondaryColorType.STATIC;
     public int primary = 0xFFFFFF;
     public int secondary = 0xB5B5B5;
     public DurabilityType durabilityType = DurabilityType.PERCENTAGE;
@@ -52,5 +54,15 @@ public class MeteoriteConfig {
     public enum DurabilityType {
         PERCENTAGE,
         ABSOLUTE
+    }
+
+    public enum PrimaryColorType {
+        RAINBOW,
+        STATIC,
+    }
+
+    public enum SecondaryColorType {
+        RAINBOW,
+        STATIC,
     }
 }

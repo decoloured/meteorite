@@ -10,11 +10,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+
 import org.apache.commons.lang3.text.WordUtils;
-import org.lwjgl.opengl.GL11;
 
 import me.decoloured.meteorite.Meteorite;
 import me.decoloured.meteorite.config.MeteoriteConfig;
+import me.decoloured.meteorite.config.MeteoriteConfig.PrimaryColorType;
+import me.decoloured.meteorite.config.MeteoriteConfig.SecondaryColorType;
 import me.decoloured.meteorite.config.MeteoriteConfig.TextRadarLocation;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -31,6 +33,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tag.FluidTags;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
@@ -83,12 +87,14 @@ public class DrawUI implements Drawable {
 
     this.client.getProfiler().pop();
     color = System.nanoTime() / 50000000000F;
-    this.config.primary = Color.HSBtoRGB(color, 0.5F, 1.0F);
   }
 
   private void drawRightStats() {
     if (Meteorite.config().armor) {
       drawEquipmentInfo();
+    }
+    if (Meteorite.config().itemCount) {
+      drawItemCount(player);
     }
 
     offset = 0.0F;
@@ -119,7 +125,7 @@ public class DrawUI implements Drawable {
         String effectString2 = String.format(" %s %s", effectName, effect.getValue().getAmplifier() + 1);
 
         drawWithShadowconcat(stack, effectString, scaleWidth - this.text.getWidth(effectString2) - 2,
-            scaleHeight - height, color, stack, effectString2, this.config.secondary, false);
+            scaleHeight - height, color, stack, effectString2, secondaryColor(), false);
         scaleHeight -= height;
         // offset += offsetAmount;
       }
@@ -129,16 +135,16 @@ public class DrawUI implements Drawable {
         String coords = "XYZ ";
         String coords2 = getCoords();
         drawWithShadowconcat(stack, coords, scaleWidth - this.text.getWidth(coords2) - 2, scaleHeight - height,
-          Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, coords2, this.config.secondary, false);
+          primaryColor(), stack, coords2, secondaryColor(), false);
         scaleHeight -= height;
         offset += offsetAmount;
       }
       if (this.config.direction) {
         String direction = getDirection();
-        String direction2 = String.format("[%.1f, %.1f]", MathHelper.wrapDegrees(this.player.yaw),
-            MathHelper.wrapDegrees(this.player.pitch));
+        String direction2 = String.format("[%.1f, %.1f]", MathHelper.wrapDegrees(this.player.getYaw()),
+            MathHelper.wrapDegrees(this.player.getPitch()));
         drawWithShadowconcat(stack, direction, scaleWidth - this.text.getWidth(direction2) - 2, scaleHeight - height,
-          Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, direction2, this.config.secondary, false);
+          primaryColor(), stack, direction2, secondaryColor(), false);
         scaleHeight -= height;
         offset += offsetAmount;
       }
@@ -149,7 +155,7 @@ public class DrawUI implements Drawable {
           .getId(this.client.world.getBiome(this.player.getBlockPos())).toString();
       biome2 = WordUtils.capitalize(biome2.substring(10).replace("_", " "));
       drawWithShadowconcat(stack, biome, scaleWidth - this.text.getWidth(biome2) - 2, scaleHeight - height,
-        Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, biome2, this.config.secondary, false);
+        primaryColor(), stack, biome2, secondaryColor(), false);
       scaleHeight -= height;
       offset += offsetAmount;
     }
@@ -157,7 +163,7 @@ public class DrawUI implements Drawable {
       String saturation = "Saturation ";
       String saturation2 = String.format("%.1f", player.getHungerManager().getSaturationLevel());
       drawWithShadowconcat(stack, saturation, scaleWidth - this.text.getWidth(saturation2) - 2, scaleHeight - height,
-        Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, saturation2, this.config.secondary, false);
+        primaryColor(), stack, saturation2, secondaryColor(), false);
       scaleHeight -= height;
       offset += offsetAmount;
     }
@@ -169,7 +175,7 @@ public class DrawUI implements Drawable {
       String durability2 = String.valueOf(damage);
       if (hand.isDamageable()) {
         drawWithShadowconcat(stack, durability, scaleWidth - this.text.getWidth(durability2) - 2, scaleHeight - height,
-          Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, durability2, this.config.secondary, false);
+          primaryColor(), stack, durability2, secondaryColor(), false);
         scaleHeight -= height;
         offset += offsetAmount;
       }
@@ -187,7 +193,7 @@ public class DrawUI implements Drawable {
         speed2 = String.format("%.1f m/s", dist * 20);
       }
       drawWithShadowconcat(stack, speed, scaleWidth - this.text.getWidth(speed2) - 2, scaleHeight - height,
-        Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, speed2, this.config.secondary, false);
+        primaryColor(), stack, speed2, secondaryColor(), false);
       scaleHeight -= height;
       offset += offsetAmount;
     }
@@ -211,8 +217,11 @@ public class DrawUI implements Drawable {
 
       String time = "Time ";
       String time2 = String.format("%02d:%02d %s", hour, min, ahour);
+      if (dayTicks > 12500 && dayTicks < 23400) {
+        time2 = Formatting.UNDERLINE + time2;
+      }
       drawWithShadowconcat(stack, time, scaleWidth - this.text.getWidth(time2) - 2, scaleHeight - height,
-        Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, time2, this.config.secondary, false);
+        primaryColor(), stack, time2, secondaryColor(), false);
       scaleHeight -= height;
       offset += offsetAmount;
     }
@@ -221,7 +230,7 @@ public class DrawUI implements Drawable {
       String arrow2 = String.format("%s", DrawUI.arrowCount);
       if (projectile()) {
         drawWithShadowconcat(stack, arrow, scaleWidth - this.text.getWidth(arrow2) - 2, scaleHeight - height,
-          Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, arrow2, this.config.secondary, false);
+          primaryColor(), stack, arrow2, secondaryColor(), false);
         scaleHeight -= height;
         offset += offsetAmount;
       }
@@ -231,7 +240,7 @@ public class DrawUI implements Drawable {
       String totem2 = String.format("%s", DrawUI.totemCount);
       if (DrawUI.totemCount != 0) {
         drawWithShadowconcat(stack, totem, scaleWidth - this.text.getWidth(totem2) - 2, scaleHeight - height,
-          Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, totem2, this.config.secondary, false);
+          primaryColor(), stack, totem2, secondaryColor(), false);
         scaleHeight -= height;
         offset += offsetAmount;
       }
@@ -240,7 +249,7 @@ public class DrawUI implements Drawable {
       String tps = "TPS ";
       String tps2 = String.format("%.2f", DrawUI.serverTPS);
       drawWithShadowconcat(stack, tps, scaleWidth - this.text.getWidth(tps2) - 2, scaleHeight - height,
-        Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, tps2, this.config.secondary, false);
+        primaryColor(), stack, tps2, secondaryColor(), false);
       scaleHeight -= height;
       offset += offsetAmount;
     }
@@ -251,7 +260,7 @@ public class DrawUI implements Drawable {
           String ping = "Ping ";
           String ping2 = String.valueOf(entry.getLatency()) + "ms";
           drawWithShadowconcat(stack, ping, scaleWidth - this.text.getWidth(ping2) - 2, scaleHeight - height,
-            Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, ping2, this.config.secondary, false);
+            primaryColor(), stack, ping2, secondaryColor(), false);
           scaleHeight -= height;
           offset += offsetAmount;
         }
@@ -262,17 +271,16 @@ public class DrawUI implements Drawable {
       String fps = "FPS ";
       String fps2 = this.client.fpsDebugString.substring(0, this.client.fpsDebugString.indexOf(" "));
       drawWithShadowconcat(stack, fps, scaleWidth - this.text.getWidth(fps2) - 2, scaleHeight - height,
-        Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, fps2, this.config.secondary, false);
+        primaryColor(), stack, fps2, secondaryColor(), false);
       scaleHeight -= height;
       offset += offsetAmount;
     }
     if (this.config.xp) {
-      float percent = this.player.experienceProgress * 100;
-      String xp = "XP ";
-      String xp2 = String.format("%.0f%%", percent);
+      String xp = "XP " + this.player.experienceLevel;
+      String xp2 =  "/" + this.player.totalExperience;
       if (!this.player.isCreative()) {
         drawWithShadowconcat(stack, xp, scaleWidth - this.text.getWidth(xp2) - 2, scaleHeight - height,
-          Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, xp2, this.config.secondary, false);
+          primaryColor(), stack, xp2, secondaryColor(), false);
         scaleHeight -= height;
         offset += offsetAmount;
       }
@@ -307,11 +315,11 @@ public class DrawUI implements Drawable {
 
           if (this.config.textRadarLocation == TextRadarLocation.NORMAL) {
             drawWithShadowconcat(stack, player, scaleWidth - this.text.getWidth(player2) - 2, scaleHeight - height,
-              Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, player2, this.config.secondary, false);
+              primaryColor(), stack, player2, secondaryColor(), false);
             scaleHeight -= height;
           } else {
             drawWithShadowconcat(stack, player, this.client.getWindow().getScaledWidth() / 2 + 2, radarHeight - height,
-              Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, player2, this.config.secondary, true);
+              primaryColor(), stack, player2, secondaryColor(), true);
             radarHeight += height;
           }
           offset += offsetAmount;
@@ -334,16 +342,16 @@ public class DrawUI implements Drawable {
         String coords = "XYZ ";
         String coords2 = getCoords();
         drawWithShadowconcat(stack, coords, scaleWidth, scaledHeight - height, 
-          Color.HSBtoRGB(color, 0.5F, 1.0F), stack, coords2, this.config.secondary, true);
+          primaryColor(), stack, coords2, secondaryColor(), true);
         scaledHeight -= height;
         offset += offsetAmount;
       }
       if (this.config.direction) {
         String direction = getDirection();
-        String direction2 = String.format("[%.1f, %.1f]", MathHelper.wrapDegrees(this.player.yaw),
-            MathHelper.wrapDegrees(this.player.pitch));
+        String direction2 = String.format("[%.1f, %.1f]", MathHelper.wrapDegrees(this.player.getYaw()),
+            MathHelper.wrapDegrees(this.player.getPitch()));
         drawWithShadowconcat(stack, direction, scaleWidth, scaledHeight - height, 
-          Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, direction2, this.config.secondary, true);
+          primaryColor(), stack, direction2, secondaryColor(), true);
         scaledHeight -= height;
         offset += offsetAmount;
       }
@@ -353,8 +361,8 @@ public class DrawUI implements Drawable {
         this.player.getEntityWorld().getServer();
         String ip = "IP ";
         String ip2 = this.client.getCurrentServerEntry().address;
-        drawWithShadowconcat(stack, ip, scaleWidth, scaledHeight - height, Color.HSBtoRGB(color, 0.5F, 1.0F), stack,
-            ip2, this.config.secondary, true);
+        drawWithShadowconcat(stack, ip, scaleWidth, scaledHeight - height, 
+          primaryColor(), stack, ip2, secondaryColor(), true);
         scaledHeight -= height;
         offset += offsetAmount;
       }
@@ -365,8 +373,7 @@ public class DrawUI implements Drawable {
       String time = "Time ";
       String time2 = formatter.format(date);
       drawWithShadowconcat(stack, time, scaleWidth, scaledHeight - height, 
-        Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, time2, this.config.secondary,
-          true);
+        primaryColor(), stack, time2, secondaryColor(), true);
       scaledHeight -= height;
       offset += offsetAmount;
     }
@@ -380,7 +387,7 @@ public class DrawUI implements Drawable {
       // 1.5F, 6, 0xFFFFFF);
       // GL11.glPopMatrix();
       drawWithShadowconcat(stack, name, scaleWidth, scaledHeight - height, 
-        Color.HSBtoRGB(color + offset, 0.5F, 1.0F), stack, name2, this.config.secondary, true);
+        primaryColor(), stack, name2, secondaryColor(), true);
       scaledHeight -= height;
       offset += offsetAmount;
     }
@@ -410,9 +417,26 @@ public class DrawUI implements Drawable {
     }
   }
 
+  private void drawItemCount(ClientPlayerEntity player) {
+    MatrixStack stack = new MatrixStack();
+    ItemStack item = player.getInventory().getMainHandStack();
+    if (player.isCreative() || player.isSpectator() || !item.isStackable() || item.getItem().toString() == "air") {
+      return;
+    }
+    int size = player.getInventory().size();
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+      String j = player.getInventory().getStack(i).getItem().toString();
+      if (j == item.getItem().toString()) {
+        count += player.getInventory().getStack(i).getCount();
+      }
+    }
+    this.text.drawWithShadow(stack, "" + count, (this.client.getWindow().getScaledWidth() - this.text.getWidth("" + count)) / 2, this.client.getWindow().getScaledHeight() - 45, primaryColor());
+  }
+
   private void drawEquipmentInfo() {
     MatrixStack stack = new MatrixStack();
-    List<ItemStack> equippedItems = new ArrayList<>(this.player.inventory.armor);
+    List<ItemStack> equippedItems = new ArrayList<>(this.player.getInventory().armor);
     equippedItems = Lists.reverse(equippedItems);
     equippedItems.add(this.player.getOffHandStack());
 
@@ -422,7 +446,7 @@ public class DrawUI implements Drawable {
     int i = 0;
     // Draw in order Helmet -> Breastplate -> Leggings -> Boots
     for (ItemStack equippedItem : equippedItems) {
-      if (equippedItem.getItem().equals(Blocks.AIR.asItem())) {
+      if (equippedItem.getItem().equals(Blocks.AIR.asItem()) || player.isSpectator()) {
         continue;
       }
       i++;
@@ -432,36 +456,51 @@ public class DrawUI implements Drawable {
       if (this.player.isCreative()) {
         height = this.client.getWindow().getScaledHeight() - 40;
       }
-      if (this.player.getAir() != 300) {
+      if (player.isSubmergedIn(FluidTags.WATER)) {
         height = this.client.getWindow().getScaledHeight() - 65;
       }
 
-      this.client.getItemRenderer().renderInGuiWithOverrides(this.player, equippedItem, x, height);
+      this.client.getItemRenderer().renderInGuiWithOverrides(equippedItem, x, height);
       this.client.getItemRenderer().renderGuiItemOverlay(this.text, equippedItem, x, height);
       int durability = equippedItem.getMaxDamage() - equippedItem.getDamage();
       if (equippedItem.isDamageable()) {
-        GL11.glPushMatrix();
-        GL11.glTranslatef(textX, 0, 0);
-        GL11.glScaled(0.666666666, 0.666666666, 0.666666666);
+        stack.push();
+        stack.translate(textX, 0, 0);
+        stack.scale(2F/3F, 2F/3F, 2F/3F);
         float t = 10.5F - this.text.getWidth(durability(durability, equippedItem.getMaxDamage())) / 2;
         // chromaText(stack, String.format("%s", durability), (x.floatValue() * 1.5F) +
         // (4 - String.valueOf(durability).length()) * 3, (height.floatValue() - 6F) *
         // 1.5F, offset);
 
-        this.text.drawWithShadow(stack, durability(durability,
-        equippedItem.getMaxDamage()), t, (height.floatValue() - 6F) * 1.5F,
-        Color.HSBtoRGB(color + offset, 0.5F, 1.0F));
+        this.text.drawWithShadow(stack, durability(durability, equippedItem.getMaxDamage()),
+          t, (height.floatValue() - 6F) * 1.5F, primaryColor());
         //this.text.draw(stack, durability(durability, equippedItem.getMaxDamage()), t + 0.333333F,
         //    (height.floatValue() - 6F) * 1.5F + 0.333333F, shadowColor());
         //this.text.draw(stack, durability(durability, equippedItem.getMaxDamage()), t, (height.floatValue() - 6F) * 1.5F,
         //  Color.HSBtoRGB(color + offset, 0.5F, 1.0F));
 
-        GL11.glPopMatrix();
+        stack.pop();
       }
       offset += 0.05F;
       itemWidth += itemSize;
     }
     offset = 0.0F;
+  }
+
+  private int primaryColor() {
+    if (config.primaryColorType == PrimaryColorType.RAINBOW) {
+      return Color.HSBtoRGB(color + offset, 0.5F, 1.0F);
+    } else {
+      return config.primary;
+    }
+  }
+
+  private int secondaryColor() {
+    if (config.secondaryColorType == SecondaryColorType.RAINBOW) {
+      return Color.HSBtoRGB(color + offset, 0.5F, 1.0F);
+    } else {
+      return config.secondary;
+    }
   }
 
   private String zeroPadding(int number) {
@@ -503,24 +542,24 @@ public class DrawUI implements Drawable {
   }
 
   public static void getArrowCount(ClientPlayerEntity player) {
-    int size = player.inventory.size();
+    int size = player.getInventory().size();
     int c = 0;
     for (int i = 0; i < size; i++) {
-      String j = player.inventory.getStack(i).getItem().toString();
+      String j = player.getInventory().getStack(i).getItem().toString();
       if (j == "arrow" || j == "spectral_arrow" || j == "tipped_arrow") {
-        c += player.inventory.getStack(i).getCount();
+        c += player.getInventory().getStack(i).getCount();
       }
     }
     DrawUI.arrowCount = c;
   }
 
   public static void getTotemCount(ClientPlayerEntity player) {
-    int size = player.inventory.size();
+    int size = player.getInventory().size();
     int c = 0;
     for (int i = 0; i < size; i++) {
-      String j = player.inventory.getStack(i).getItem().toString();
+      String j = player.getInventory().getStack(i).getItem().toString();
       if (j == "totem_of_undying") {
-        c += player.inventory.getStack(i).getCount();
+        c += player.getInventory().getStack(i).getCount();
       }
     }
     DrawUI.totemCount = c;

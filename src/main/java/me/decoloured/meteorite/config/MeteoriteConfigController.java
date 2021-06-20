@@ -41,30 +41,57 @@ public final class MeteoriteConfigController {
                 .setParentScreen(parent)
                 .setTitle(new TranslatableText("meteorite.config.title"))
                 .setSavingRunnable(() -> persist(config));
+
         builder.getOrCreateCategory(new TranslatableText("meteorite.config.category.general"))
                 .addEntry(ConfigEntryBuilder.create()
-                        .startSelector(new TranslatableText("meteorite.config.option.durabilityType"), MeteoriteConfig.DurabilityType.values(), config.durabilityType)
-                        .setDefaultValue(MeteoriteConfig.DurabilityType.PERCENTAGE)
-                        .setNameProvider(value -> {
-                            if(value.equals(MeteoriteConfig.DurabilityType.PERCENTAGE)) {
-                                return new TranslatableText("meteorite.config.option.durabilityType.percentage");
-                            } else if(value.equals(MeteoriteConfig.DurabilityType.ABSOLUTE)) {
-                                return new TranslatableText("meteorite.config.option.durabilityType.absolute");
-                            }
-                            return new LiteralText("Error");
-                        })
-                        .setSaveConsumer(value -> config.durabilityType = value)
-                        .build())
-                //.addEntry(ConfigEntryBuilder.create()
-                //        .startBooleanToggle(new TranslatableText("meteorite.config.option.rainbow"), config.rainbow)
-                //        .setDefaultValue(defaults.rainbow)
-                //        .setSaveConsumer(value -> config.rainbow = value)
-                //        .build())
-                //.addEntry(ConfigEntryBuilder.create()
-                //        .startColorField(new TranslatableText("meteorite.config.option.primary"), config.primary)
-                //        .setDefaultValue(defaults.primary)
-                //        .setSaveConsumer(value -> config.primary = value)
-                //        .build())
+                            .startSelector(new TranslatableText("meteorite.config.option.primaryColorType"), MeteoriteConfig.PrimaryColorType.values(), config.primaryColorType)
+                            .setDefaultValue(MeteoriteConfig.PrimaryColorType.RAINBOW)
+                            .setNameProvider(value -> {
+                                if(value.equals(MeteoriteConfig.PrimaryColorType.RAINBOW)) {
+                                    return new TranslatableText("meteorite.config.option.ColorType.rainbow");
+                                } else if(value.equals(MeteoriteConfig.PrimaryColorType.STATIC)) {
+                                    return new TranslatableText("meteorite.config.option.ColorType.static");
+                                }
+                                return new LiteralText("Error");
+                            })
+                            .setSaveConsumer(value -> config.primaryColorType = value)
+                            .build())
+                .addEntry(ConfigEntryBuilder.create()
+                            .startColorField(new TranslatableText("meteorite.config.option.primary"), config.primary)
+                            .setDefaultValue(defaults.primary)
+                            .setSaveConsumer(value -> config.primary = value)
+                            .build())
+                .addEntry(ConfigEntryBuilder.create()
+                            .startSelector(new TranslatableText("meteorite.config.option.secondaryColorType"), MeteoriteConfig.SecondaryColorType.values(), config.secondaryColorType)
+                            .setDefaultValue(MeteoriteConfig.SecondaryColorType.STATIC)
+                            .setNameProvider(value -> {
+                                if(value.equals(MeteoriteConfig.SecondaryColorType.RAINBOW)) {
+                                    return new TranslatableText("meteorite.config.option.ColorType.rainbow");
+                                } else if(value.equals(MeteoriteConfig.SecondaryColorType.STATIC)) {
+                                    return new TranslatableText("meteorite.config.option.ColorType.static");
+                                }
+                                return new LiteralText("Error");
+                            })
+                            .setSaveConsumer(value -> config.secondaryColorType = value)
+                            .build())
+                .addEntry(ConfigEntryBuilder.create()
+                            .startColorField(new TranslatableText("meteorite.config.option.secondary"), config.secondary)
+                            .setDefaultValue(defaults.secondary)
+                            .setSaveConsumer(value -> config.secondary = value)
+                            .build())   
+                .addEntry(ConfigEntryBuilder.create()
+                            .startSelector(new TranslatableText("meteorite.config.option.durabilityType"), MeteoriteConfig.DurabilityType.values(), config.durabilityType)
+                            .setDefaultValue(MeteoriteConfig.DurabilityType.PERCENTAGE)
+                            .setNameProvider(value -> {
+                                if(value.equals(MeteoriteConfig.DurabilityType.PERCENTAGE)) {
+                                    return new TranslatableText("meteorite.config.option.durabilityType.percentage");
+                                } else if(value.equals(MeteoriteConfig.DurabilityType.ABSOLUTE)) {
+                                    return new TranslatableText("meteorite.config.option.durabilityType.absolute");
+                                }
+                                return new LiteralText("Error");
+                            })
+                            .setSaveConsumer(value -> config.durabilityType = value)
+                            .build())
                 .addEntry(ConfigEntryBuilder.create()
                         .startSelector(new TranslatableText("meteorite.config.option.speedunit"), MeteoriteConfig.SpeedUnit.values(), config.speedUnit)
                         .setDefaultValue(MeteoriteConfig.SpeedUnit.METERSPERSECOND)
@@ -93,7 +120,6 @@ public final class MeteoriteConfigController {
                         .build());
 
         builder.getOrCreateCategory(new TranslatableText("meteorite.config.category.world"))
-
                 .addEntry(ConfigEntryBuilder.create()
                         .startBooleanToggle(new TranslatableText("meteorite.config.option.showBiome"), config.biome)
                         .setDefaultValue(defaults.biome)
@@ -174,6 +200,11 @@ public final class MeteoriteConfigController {
                         .startBooleanToggle(new TranslatableText("meteorite.config.option.showSaturation"), config.saturation)
                         .setDefaultValue(defaults.saturation)
                         .setSaveConsumer(value -> config.saturation = value)
+                        .build())
+                .addEntry(ConfigEntryBuilder.create()
+                        .startBooleanToggle(new TranslatableText("meteorite.config.option.showItemCount"), config.itemCount)
+                        .setDefaultValue(defaults.itemCount)
+                        .setSaveConsumer(value -> config.itemCount = value)
                         .build());
         builder.getOrCreateCategory(new TranslatableText("meteorite.config.category.network"))
                 .addEntry(ConfigEntryBuilder.create()
@@ -233,6 +264,7 @@ public final class MeteoriteConfigController {
             config.speed = Boolean.parseBoolean(props.getProperty("player.speed"));
             config.textradar = Boolean.parseBoolean(props.getProperty("player.textradar"));
             config.saturation = Boolean.parseBoolean(props.getProperty("player.saturation"));
+            config.itemCount = Boolean.parseBoolean(props.getProperty("player.itemCount"));
 
             //Network
             config.ip = Boolean.parseBoolean(props.getProperty("network.ip"));
@@ -243,14 +275,17 @@ public final class MeteoriteConfigController {
             //Client
             config.fps = Boolean.parseBoolean(props.getProperty("client.fps"));
             config.time = Boolean.parseBoolean(props.getProperty("client.time"));
-            //config.rainbow = Boolean.parseBoolean(props.getProperty("client.rainbow"));
-            //try {
-            //    config.primary = Integer.parseInt(props.getProperty("general.primary"));
-            //} catch (Exception e) {
-            //    config.primary = 0xFFFFFF;
-            //}
 
             //General
+            config.primaryColorType = MeteoriteConfig.PrimaryColorType.valueOf(props.getProperty("general.primarycolortype", "RAINBOW"));
+            try {
+                config.primary = Integer.parseInt(props.getProperty("general.primary"));
+                config.secondary= Integer.parseInt(props.getProperty("general.secondary"));
+            } catch (Exception e) {
+                config.primary = defaults.primary;
+                config.secondary = defaults.secondary;
+            }
+            config.secondaryColorType = MeteoriteConfig.SecondaryColorType.valueOf(props.getProperty("general.secondarycolortype", "STATIC"));
             config.durabilityType = MeteoriteConfig.DurabilityType.valueOf(props.getProperty("general.durabilitytype", "PERCENTAGE"));
             config.speedUnit = MeteoriteConfig.SpeedUnit.valueOf(props.getProperty("general.speedunit", "METERSPERSECOND"));
             config.textRadarLocation = MeteoriteConfig.TextRadarLocation.valueOf(props.getProperty("general.textradarlocation", "NORMAL"));
@@ -278,6 +313,7 @@ public final class MeteoriteConfigController {
         props.setProperty("player.speed", String.valueOf(config.speed));
         props.setProperty("player.textradar", String.valueOf(config.textradar));
         props.setProperty("player.saturation", String.valueOf(config.saturation));
+        props.setProperty("player.itemCount", String.valueOf(config.itemCount));
         //Network
         props.setProperty("network.ip", String.valueOf(config.ip));
         props.setProperty("network.ping", String.valueOf(config.ping));
@@ -287,8 +323,10 @@ public final class MeteoriteConfigController {
         props.setProperty("client.fps", String.valueOf(config.fps));
         props.setProperty("client.time", String.valueOf(config.time));
         //General
-        //props.setProperty("general.rainbow", String.valueOf(config.rainbow));
-        //props.setProperty("general.primary", String.valueOf(config.primary));
+        props.setProperty("general.primarycolortype", String.valueOf(config.primaryColorType));
+        props.setProperty("general.primary", String.valueOf(config.primary));
+        props.setProperty("general.secondary", String.valueOf(config.secondary));
+        props.setProperty("general.secondarycolortype", String.valueOf(config.secondaryColorType));
         props.setProperty("general.durabilitytype", String.valueOf(config.durabilityType));
         props.setProperty("general.speedunit", String.valueOf(config.speedUnit));
         props.setProperty("general.textradarlocation", String.valueOf(config.textRadarLocation));

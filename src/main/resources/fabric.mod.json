@@ -3,7 +3,7 @@
   "id": "meteorite",
   "version": "$version",
   "name": "meteorite",
-  "description": "A basic hud mod. Originally ZiiM Hud created by ZiiM",
+  "description": "A very basic hud mod. Fork of ZiiM HUD",
   "authors": [
     "ZiiM",
     "decoloured"
@@ -11,7 +11,7 @@
   "contact": {
   },
 
-  "license": "MIT",
+  "license": "GPLv3",
   "icon": "assets/meteorite/icon.png",
 
   "environment": "*",
@@ -30,10 +30,10 @@
   "depends": {
     "fabricloader": ">=0.7.4",
     "fabric": ">=0.3.0",
-    "minecraft": "1.16.x"
+    "minecraft": "1.17.x"
   },
   "recommends": {
-    "modmenu": ">=1.12.0"
+    "modmenu": ">=2.0.0"
   },
   "suggests": {
     "flamingo": "*"

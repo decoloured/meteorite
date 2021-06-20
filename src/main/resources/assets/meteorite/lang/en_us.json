@@ -24,6 +24,7 @@
   "meteorite.config.option.showSpeed": "Toggle Speed",
   "meteorite.config.option.showTextRadar": "Toggle Text Radar",
   "meteorite.config.option.showSaturation": "Toggle Saturation",
+  "meteorite.config.option.showItemCount": "Toggle Item Count",
 
   "meteorite.config.option.showIP": "Toggle IP",
   "meteorite.config.option.showPing": "Toggle Ping",
@@ -32,10 +33,14 @@
   "meteorite.config.option.showFPS": "Toggle FPS",
   "meteorite.config.option.showTime": "Toggle Time",
 
-  "meteorite.config.option.rainbow": "Rainbow Text",
+
+  "meteorite.config.option.primaryColorType": "Primary Color Type",
   "meteorite.config.option.primary": "Primary Color",
+  "meteorite.config.option.secondaryColorType": "Secondary Color Type",
   "meteorite.config.option.secondary": "Secondary Color",
-  "meteorite.config.option.durabilityType": "Durability Type",
+  "meteorite.config.option.ColorType.rainbow": "Rainbow",
+  "meteorite.config.option.ColorType.static": "Static",
+  "meteorite.config.option.durabilityType": "Durability Display",
   "meteorite.config.option.durabilityType.percentage": "Percentage",
   "meteorite.config.option.durabilityType.absolute": "Absolute",
   "meteorite.config.option.speedunit": "Speed Unit",
