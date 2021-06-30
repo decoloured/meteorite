@@ -90,10 +90,10 @@ public class DrawUI implements Drawable {
   }
 
   private void drawRightStats() {
-    if (Meteorite.config().armor) {
+    if (this.config.armor) {
       drawEquipmentInfo();
     }
-    if (Meteorite.config().itemCount) {
+    if (this.config.itemCount) {
       drawItemCount(player);
     }
 
@@ -456,7 +456,7 @@ public class DrawUI implements Drawable {
       if (this.player.isCreative()) {
         height = this.client.getWindow().getScaledHeight() - 40;
       }
-      if (player.isSubmergedIn(FluidTags.WATER)) {
+      if (player.isSubmergedIn(FluidTags.WATER) || player.getAir() < 300) {
         height = this.client.getWindow().getScaledHeight() - 65;
       }
 
