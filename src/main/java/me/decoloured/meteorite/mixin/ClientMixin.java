@@ -30,7 +30,7 @@ public class ClientMixin {
         this.drawUI = new DrawUI(this.client);
     }
     
-    @Inject(method = "render", at = @At(value = "HEAD", target = "Lnet/minecraft/client/options/GameOptions;hudHidden:Z", ordinal = 2))
+    @Inject(method = "render", at = @At(value = "TAIL", target = "Lnet/minecraft/client/options/GameOptions;hudHidden:Z", ordinal = 2))
     private void onDraw(MatrixStack matrixStack, float f, CallbackInfo ci) {
         if (!this.client.options.debugEnabled) {
             this.drawUI.draw();
